@@ -1,6 +1,6 @@
 {
-    "name": "midterm_app",
-    "short_name": "midterm_app",
+    "name": "team_app",
+    "short_name": "team_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

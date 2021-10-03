@@ -1,4 +1,4 @@
-# midterm_app
+# team_app
 
 A new Flutter project.
 
