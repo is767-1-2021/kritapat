@@ -1,6 +1,6 @@
 {
-    "name": "team_app",
-    "short_name": "team_app",
+    "name": "tinder_ui_clone_example",
+    "short_name": "tinder_ui_clone_example",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:team_app/models/first_form_model.dart';
-import 'package:team_app/pages/menu_page.dart';
-import 'pages/filter_page.dart';
-import 'pages/register_page.dart';
+import 'package:whatHome/page/home_page.dart';
+import 'package:whatHome/provider/feedback_position_provider.dart';
+import 'package:whatHome/model/first_form_model.dart';
+import 'package:whatHome/provider/bookmark_model.dart';
+
+const Color darkBlue = Color.fromARGB(255, 18, 32, 47);
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => FeedbackPositionProvider()),
         ChangeNotifierProvider(
           create: (context) => FirstFormModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => BookmarkBloc(),
         ),
       ],
       child: MyApp(),
@@ -22,19 +28,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primaryColor: Colors.amber,
-          accentColor: Colors.blue[200],
-          textTheme: TextTheme(
-            bodyText2: TextStyle(color: Colors.purple),
-          ),
-        ),
-        initialRoute: '/3',
-        routes: <String, WidgetBuilder>{
-          '/1': (context) => MyHomePage(title: 'Filter Page'),
-          '/2': (context) => RegisterPage(),
-          '/3': (context) => MenuPage(),
-        });
+      theme: ThemeData.light(),
+      debugShowCheckedModeBanner: true,
+      home: HomePage(),
+    );
   }
 }
