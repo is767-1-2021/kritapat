@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:whatHome/widget/navigation_drawer_widget.dart';
 
 class FilterPage extends StatefulWidget {
-  FilterPage({Key key, this.title = ''}) : super(key: key);
+  FilterPage({Key key, this.title = 'Filter'}) : super(key: key);
   final String title;
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _FilterPage createState() => _FilterPage();
 }
 
-class _MyHomePageState extends State<FilterPage> {
+class _FilterPage extends State<FilterPage> {
   List<User> selectedUserList = [];
 
   void _openFilterDialog() async {

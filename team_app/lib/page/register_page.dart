@@ -81,6 +81,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter Email.';
+              } else if (!value.contains('@')) {
+                return 'Please enter valid Email.';
               }
 
               return null;
