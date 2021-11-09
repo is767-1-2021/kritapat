@@ -18,6 +18,16 @@ class Todo {
       json['completed'] as bool,
     );
   }
+  factory Todo.fromDs(
+    Map<String, Object?> json,
+  ) {
+    return Todo(
+      json['userId'] as int,
+      json['id'] as int,
+      json['title'] as String,
+      json['completed'] as bool,
+    );
+  }
 }
 
 class AllTodos {
@@ -34,9 +44,8 @@ class AllTodos {
 
   factory AllTodos.fromSnapshot(QuerySnapshot s) {
     List<Todo> todos = s.docs.map((DocumentSnapshot ds) {
-      return Todo.fromJson(ds.data() as Map<String, dynamic>);
+      return Todo.fromDs(ds.data() as Map<String, dynamic>);
     }).toList();
-
     return AllTodos(todos);
   }
 }
