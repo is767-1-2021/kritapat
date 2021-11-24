@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:whatHome/controllers/what_to_eat_controller.dart';
 import 'package:whatHome/data/users.dart';
 import 'package:whatHome/model/user.dart';
+import '../model/what_to_eat_model.dart';
+import '../services/services.dart';
 import 'package:whatHome/widget/navigation_drawer_widget.dart';
 import 'package:whatHome/provider/feedback_position_provider.dart';
 import 'package:whatHome/widget/bottom_buttons_widget.dart';
@@ -14,6 +17,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<User> users = dummyUsers;
+  // FirebaseServices services = FirebaseServices();
+  WhatToEatController controller = WhatToEatController();
+  List<WhatToEatModel> whatToEatList = [];
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -32,27 +39,31 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(8),
-          child: Column(
-            children: [
-              users.isEmpty
-                  ? Column(
-                    children:<Widget>[
-                      Image.network('https://thumbs.gfycat.com/UncomfortableInfatuatedFlickertailsquirrel.webp'),
-                      Text('No more Food for U',style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        fontFamily: 'OpenSans')),
-                      Image.network('https://c.tenor.com/do8q_eYrsW4AAAAd/crying-black-guy-meme.gif'),
-                      ],
-                      )
-                  : Stack(children: users.map(buildUser).toList()),
-              Expanded(child: Container()),
-              BottomButtonsWidget()
-            ],
+          child: RefreshIndicator(
+            onRefresh: callWhatToEatList,
+            child: ListView(
+              children: [
+                whatToEatList.isEmpty
+                    ? Column(
+                      children:<Widget>[
+                        Image.network('https://thumbs.gfycat.com/UncomfortableInfatuatedFlickertailsquirrel.webp'),
+                        Text('No more Food for U',style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          fontFamily: 'OpenSans')),
+                        Image.network('https://c.tenor.com/do8q_eYrsW4AAAAd/crying-black-guy-meme.gif'),
+                        ],
+                        )
+                    : isLoading?  CircularProgressIndicator() : Stack(children: whatToEatList.map(buildUser).toList()),
+                // Expanded(child: Container()),
+                SizedBox(height: 35,),
+                BottomButtonsWidget()
+              ],
+            ),
           ),
         ),
-      ),
+            ),
       );
 
   Widget buildAppBar() => AppBar(
@@ -63,9 +74,9 @@ class _HomePageState extends State<HomePage> {
         title: Text('What to eat')
         );
 
-  Widget buildUser(User user) {
-    final userIndex = users.indexOf(user);
-    final isUserInFocus = userIndex == users.length - 1;
+  Widget buildUser(WhatToEatModel user) {
+    final userIndex = whatToEatList.indexOf(user);
+    final isUserInFocus = userIndex == whatToEatList.length - 1;
 
     return Listener(
       onPointerMove: (pointerEvent) {
@@ -95,7 +106,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void onDragEnd(DraggableDetails details, User user) {
+  void onDragEnd(DraggableDetails details, WhatToEatModel user) {
     final minimumDrag = 100;
     if (details.offset.dx > minimumDrag) {
       user.isSwipedOff = true;
@@ -103,6 +114,23 @@ class _HomePageState extends State<HomePage> {
       user.isLiked = true;
     }
 
-    setState(() => users.remove(user));
+    setState(() => whatToEatList.remove(user));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller.onSync
+        .listen((bool syncState) => setState(() => isLoading = syncState));
+    callWhatToEatList();
+    // print(whatToEatList);
+  }
+
+  Future<void> callWhatToEatList() async {
+     var dataList = await controller.fecthWhatToEatList();
+   setState(()  {
+     whatToEatList = dataList;
+   });
   }
 }

@@ -11,6 +11,7 @@ class RegisterPage extends StatelessWidget {
     return Scaffold(
       endDrawer: NavigationDrawerWidget(),
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Register Form'),
         leading:
             (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,

@@ -52,6 +52,7 @@ class _TodoPageState extends State<TodoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Food List'),
         backgroundColor: Colors.green[800],
       ),

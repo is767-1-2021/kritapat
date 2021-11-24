@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:whatHome/controllers/shops_controller.dart';
 import 'package:whatHome/model/retail_model.dart';
+import 'package:whatHome/model/shop_model.dart';
+import 'package:whatHome/page/shop_detail.dart';
 import 'package:whatHome/widget/navigation_drawer_widget.dart';
 
 class SearchShopPage extends StatefulWidget {
@@ -79,14 +82,25 @@ class _SearchShopPage extends State<SearchShopPage> {
             'https://d1ralsognjng37.cloudfront.net/310c0443-2ec4-43d3-a7cc-c6004d6ed67b.webp'),
   ];
 
-  List<FoodListModel> dataTemp;
-  FoodListModel selectData;
+  List<ShopsModel> dataTemp = [];
+  ShopsModel selectData;
+  bool isSearch = false;
+  //init shops controller 
+  ShopsController controller = ShopsController();
+
+  List<ShopsModel> list = [];
+  bool isLoading = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    dataTemp = dataList;
+    controller.onSync
+        .listen((bool syncState) => setState(() => isLoading = syncState));
+
+    //init data to parameter
+    callShopsList();
+    // dataTemp = list;
   }
 
   @override
@@ -94,6 +108,7 @@ class _SearchShopPage extends State<SearchShopPage> {
     return Scaffold(
       endDrawer: NavigationDrawerWidget(),
       appBar: AppBar(
+        centerTitle: true,
         title: Text("Search Rastaurant"),
         leading:
             (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
@@ -108,21 +123,41 @@ class _SearchShopPage extends State<SearchShopPage> {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(25),
+                  margin: EdgeInsets.all(25),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 2),
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
                   child: Row(
                     children: [
-                      Icon(Icons.search),
+                      GestureDetector(
+                        onTap: () {
+                          if (isSearch) {
+                            setState(() {
+                              isSearch = !isSearch;
+                            });
+                          }
+                          if (!isSearch) {
+                            FocusScope.of(context).unfocus();
+                          }
+                        },
+                        child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: isSearch
+                                ? Icon(Icons.close)
+                                : Icon(Icons.search)),
+                      ),
                       Expanded(
                         child: TextField(
                           onTap: () {
                             setState(() {
-                              dataTemp = dataList;
+                              dataTemp = list;
+                              isSearch = true;
                             });
                           },
                           onChanged: (text) {
                             setState(() {
-                              dataTemp = dataList
-                                  .where((item) => item.name
+                              dataTemp = list
+                                  .where((item) => item.shopName
                                       .toLowerCase()
                                       .contains(text.toLowerCase()))
                                   .toList();
@@ -130,24 +165,24 @@ class _SearchShopPage extends State<SearchShopPage> {
                           },
                           decoration: InputDecoration(
                             hintText: 'type in Rastaurant name...',
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.teal)),
+                            border: InputBorder.none,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Container(
+                isLoading? CircularProgressIndicator() : Container(
                   // height: 100,
                   child: ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: dataTemp?.length ?? 0,
+                    itemCount: dataTemp.length ?? 0,
                     itemBuilder: (BuildContext contect, int index) {
                       final item = dataTemp[index];
                       return Container(
-                        padding: EdgeInsets.all(20),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 16),
                         child: ListTile(
                           onTap: () {
                             if (_formKey.currentState.validate()) {
@@ -156,52 +191,56 @@ class _SearchShopPage extends State<SearchShopPage> {
                                     content: Text('Processing Data')),
                               );
                             }
+
                             setState(() {
                               selectData = item;
-                              dataTemp = [];
+                              // dataTemp = [];
                             });
-                            print(item.name);
+                            print(item.shopName);
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ShopDetailPage(list: selectData,),
+                            ));
                           },
-                          title: Text(item.name),
+                          title: Text(item.shopName),
                           subtitle: Text(item.location),
                         ),
                       );
                     },
                   ),
                 ),
-                selectData != null
-                    ? Container(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.network(selectData.image),
-                            Text(selectData.name),
-                            Text(selectData.location),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: selectData.menu.length,
-                              itemBuilder: (BuildContext contect, int index) {
-                                final item = selectData.menu[index];
-                                return Container(
-                                  child: ListTile(
-                                    title: Text(item.name),
-                                    subtitle: Text("${item.price}"),
-                                  ),
-                                );
-                              },
-                            ),
-                            TextButton(
-                              onPressed: () {},
-                              child: Container(
-                                  color: Colors.yellow,
-                                  child: Text('Go To Order...')),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(),
+                // selectData != null
+                //     ? Container(
+                //         padding: EdgeInsets.all(20),
+                //         child: Column(
+                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //           children: [
+                //             Image.network(selectData.image),
+                //             Text(selectData.name),
+                //             Text(selectData.location),
+                //             ListView.builder(
+                //               shrinkWrap: true,
+                //               physics: NeverScrollableScrollPhysics(),
+                //               itemCount: selectData.menu.length,
+                //               itemBuilder: (BuildContext contect, int index) {
+                //                 final item = selectData.menu[index];
+                //                 return Container(
+                //                   child: ListTile(
+                //                     title: Text(item.name),
+                //                     subtitle: Text("${item.price}"),
+                //                   ),
+                //                 );
+                //               },
+                //             ),
+                //             TextButton(
+                //               onPressed: () {},
+                //               child: Container(
+                //                   color: Colors.yellow,
+                //                   child: Text('Go To Order...')),
+                //             ),
+                //           ],
+                //         ),
+                //       )
+                //     : Container(),
               ],
             ),
           ),
@@ -209,4 +248,14 @@ class _SearchShopPage extends State<SearchShopPage> {
       ),
     );
   }
+
+Future<void> callShopsList() async {
+  var data = await controller.fecthShopsList();
+  setState(() {
+    list = data;
+    dataTemp = list;
+  });
+}
+  
+
 }

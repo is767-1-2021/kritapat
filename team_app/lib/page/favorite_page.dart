@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:whatHome/controllers/favorite_controller.dart';
+import 'package:whatHome/model/what_to_eat_model.dart';
 import 'package:whatHome/page/bookmarks_page.dart';
 import 'package:whatHome/provider/bookmark_model.dart';
 import 'package:whatHome/model/food_model.dart';
@@ -31,8 +33,14 @@ class _FavoritePageState extends State<FavoritePage> {
     },
   ];
 
+  FavoriteController controller = FavoriteController();
+
+  List<WhatToEatModel> list = [];
+  int favoriteCount = 0;
+
   Widget build(BuildContext context) {
     var bookMarkBloc = Provider.of<BookmarkBloc>(context);
+  
 
     //FoodModel foodModel = new FoodModel();
 
@@ -46,7 +54,7 @@ class _FavoritePageState extends State<FavoritePage> {
         actions: [
           Row(
             children: [
-              Text(bookMarkBloc.count.toString()),
+              Text(count().toString()),
               IconButton(
                 icon: Icon(Icons.favorite_border),
                 onPressed: () {
@@ -67,36 +75,44 @@ class _FavoritePageState extends State<FavoritePage> {
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: foodList.length,
+              itemCount: list.length,
               itemBuilder: (context, index) {
+                var item = list[index];
                 return ListTile(
-                  onTap: () {
-                    bookMarkBloc.addCount();
-                    //print(bookMarkBloc.count);
+                  onTap: () async {
+                    // bookMarkBloc.addCount();
+                    // //print(bookMarkBloc.count);
 
-                    FoodModel foodModel = new FoodModel(
-                      title: foodList[index]['title'],
-                      subtitle: foodList[index]['subtitle'],
-                      status: foodList[index]['status'],
-                    );
+                    // FoodModel foodModel = new FoodModel(
+                    //   title: foodList[index]['title'],
+                    //   subtitle: foodList[index]['subtitle'],
+                    //   status: foodList[index]['status'],
+                    // );
 
-                    bookMarkBloc.addFood(foodModel);
+                    // bookMarkBloc.addFood(foodModel);
 
-                    print(bookMarkBloc.items[index].title);
-                    print(bookMarkBloc.items.length);
+                    // print(bookMarkBloc.items[index].title);
+                    // print(bookMarkBloc.items.length);
 
+                    // setState(() {
+                    //   foodList[index]['status'] = 'true';
+                    // });
                     setState(() {
-                      foodList[index]['status'] = 'true';
+                      item.favorite = !item.favorite;
                     });
+                    if(item.favorite){
+                      bookMarkBloc.addCount();
+                      bookMarkBloc.addFood(item);
+                    }else{
+                      bookMarkBloc.decreaseCount();
+                      bookMarkBloc.removeFood(item);
+                    }
+                    await updateFavoriteToFireBase(list);
                   },
-                  title: Text(foodList[index]['title']),
-                  subtitle: Text(foodList[index]['subtitle']),
-                  trailing: foodList[index]['status'] == "false"
-                      ? Icon(Icons.favorite_border)
-                      : Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                        ),
+                  title: Text(item.foodName),
+                  subtitle: Text(item.foodInfo),
+                  trailing: item.favorite
+                      ? Icon(Icons.favorite, color: Colors.red,): Icon(Icons.favorite_border),
                 );
               },
             )
@@ -104,5 +120,43 @@ class _FavoritePageState extends State<FavoritePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    callFavoriteList();
+  }
+
+  Future<void> callFavoriteList() async {
+   var data = await controller.favoriteList();
+   setState(() {
+     list = data;
+   });
+   favoriteCount = 0;
+   list.forEach((element) { 
+     if(element.favorite){
+       setState(() {
+         favoriteCount++;
+       });
+     }
+   });
+  }
+
+  int count(){
+    var count = 0;
+    list.forEach((element) { 
+     if(element.favorite){
+       setState(() {
+         count++;
+       });
+     }
+   });
+   return count;
+  }
+
+  Future<void> updateFavoriteToFireBase(List<WhatToEatModel> model) async {
+    await controller.updatefavoriteList(model);
   }
 }

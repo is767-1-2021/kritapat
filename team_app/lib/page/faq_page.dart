@@ -40,6 +40,7 @@ class _FaqPage extends State<FaqPage> {
     return Scaffold(
       endDrawer: NavigationDrawerWidget(),
       appBar: AppBar(
+        centerTitle: true,
         leading:
             (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         backgroundColor: Colors.green[800],
@@ -112,7 +113,15 @@ class _FaqPage extends State<FaqPage> {
                               horizontal: 20, vertical: 20),
                           height: item.isExpand ? null : 0,
                           width: double.infinity,
-                          color: Colors.white,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.green[600],
+                                  Colors.green[200],
+                                ]),
+                          ),
                           child: Text('${item.answer}'),
                         ),
                       ],

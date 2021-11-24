@@ -9,6 +9,7 @@ class OrderHistory extends StatelessWidget {
       child: Scaffold(
           endDrawer: NavigationDrawerWidget(),
           appBar: AppBar(
+            centerTitle: true,
             title: Text('Order History'),
             leading:
                 (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,

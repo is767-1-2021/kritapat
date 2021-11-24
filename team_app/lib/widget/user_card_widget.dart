@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatHome/model/user.dart';
+import 'package:whatHome/model/what_to_eat_model.dart';
 import 'package:whatHome/provider/feedback_position_provider.dart';
 
 class UserCardWidget extends StatelessWidget {
-  final User user;
+  final WhatToEatModel user;
   final bool isUserInFocus;
 
   const UserCardWidget({
@@ -25,7 +26,7 @@ class UserCardWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         image: DecorationImage(
-          image: AssetImage(user.imgUrl),
+          image: NetworkImage(user.imageUrl),
           fit: BoxFit.cover,
         ),
       ),
@@ -100,14 +101,14 @@ class UserCardWidget extends StatelessWidget {
     }
   }
 
-  Widget buildUserInfo({@required User user}) => Padding(
+  Widget buildUserInfo({@required WhatToEatModel user}) => Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '${user.name}',
+              '${user.foodName}',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -116,14 +117,14 @@ class UserCardWidget extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              user.foodinfo,
+              user.foodInfo,
               style: TextStyle(color: Colors.white),
             ),
             SizedBox(height: 4),
-            Text(
-              '${user.mutualFriends} Mutual Liked Friends',
-              style: TextStyle(color: Colors.white),
-            )
+            // Text(
+            //   '${user.mutualFriends} Mutual Liked Friends',
+            //   style: TextStyle(color: Colors.white),
+            // )
           ],
         ),
       );

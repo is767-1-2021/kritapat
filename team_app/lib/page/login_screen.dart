@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: TextFormField(
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(top: 14.0),
+                    // contentPadding: EdgeInsets.only(top: 14.0),
                     prefixIcon: Icon(
                       Icons.email,
                       color: Colors.white,
