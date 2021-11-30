@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "461334247223",
+    "project_id": "is767-2021-kritapat",
+    "storage_bucket": "is767-2021-kritapat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461334247223:android:11c6fd71e6f66234194cb2",
+        "android_client_info": {
+          "package_name": "com.example.final_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461334247223-ru823i1pcvc7piibt4at3jdr33eji33h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfGTOVNZWrL-cFTeTGfl34pN8AOATy2xk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461334247223-ru823i1pcvc7piibt4at3jdr33eji33h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
